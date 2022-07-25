@@ -1,0 +1,37 @@
+Практическое задание по теме “Операторы, фильтрация, сортировка и ограничение. Агрегация данных”
+Работаем с БД vk и тестовыми данными, которые вы сгенерировали ранее:
+
+1. Проанализировать запросы, которые выполнялись на занятии, 
+определить возможные корректировки и/или улучшения (JOIN пока не применять).
+
+2. Пусть задан некоторый пользователь. 
+Из всех друзей этого пользователя найдите человека, который больше всех общался с нашим пользователем.
+
+SELECT
+    from_user_id, COUNT(*) as send 
+FROM vk.message
+WHERE to_user_id=73
+GROUP BY from_user_id
+ORDER BY send DESC;
+
+3. Подсчитать общее количество лайков, которые получили 10 самых молодых пользователей.
+select
+user_id,
+(SELECT COUNT(*) FROM like WHERE like.user_id = profiles.user_id) AS c_like
+from profiles
+order by birthday desc
+limit 10;
+
+
+4. Определить кто больше поставил лайков (всего) - мужчины или женщины?
+
+SELECT gender, COUNT(*) as 'Кол-во' FROM profiles GROUP BY gender;
+
+5. Найти 10 пользователей, которые проявляют наименьшую активность в использовании социальной сети.
+
+select *,
+(select count(*) from `like` where user_id = `profiles`.user_id) * 1.1 +
+(select count(*) from `post` where user_id = `profiles`.user_id) * 1.3 + 
+(select count(*) from `media` where user_id = `profiles`.user_id) * 1.5 as activity
+from `profiles`
+order by activity asc limit 10

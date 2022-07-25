@@ -1,0 +1,1535 @@
+Практическое задание по теме “Управление БД”
+1. Установите СУБД MySQL. Создайте в домашней директории файл .my.cnf, 
+задав в нем логин и пароль, который указывался при установке.
+
+Microsoft Windows [Version 10.0.19043.1110]
+(c) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
+
+C:\Users\vladv>mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 23
+Server version: 8.0.25 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+
+указал путь в path и добавил файл my.cnf без точки вначале. Все работает без паролей и т.д.
+
+2. Создайте базу данных example, разместите в ней таблицу users, 
+состоящую из двух столбцов, числового id и строкового name.
+
+mysql> create database example;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| example            |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sakila             |
+| shop               |
+| sys                |
+| users              |
+| world              |
++--------------------+
+9 rows in set (0.00 sec)
+
+mysql> create table users (id INT, name VARCHAR(255));
+ERROR 1046 (3D000): No database selected
+mysql> use example;
+Database changed
+mysql> create table users (id INT, name VARCHAR(255));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> describe users;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| id    | int          | YES  |     | NULL    |       |
+| name  | varchar(255) | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+3. Создайте дамп базы данных example из предыдущего задания, разверните содержимое дампа в 
+новую базу данных sample.
+
+C:\Users\vladv>mysqldump example > dump.sql
+
+C:\Users\vladv>dir
+ Том в устройстве C не имеет метки.
+ Серийный номер тома: 92B6-8DB6
+
+ Содержимое папки C:\Users\vladv
+
+17.07.2021  12:33    <DIR>          .
+17.07.2021  12:33    <DIR>          ..
+16.07.2021  13:50               876 .bash_history
+13.07.2021  11:03    <DIR>          .eclipse
+07.07.2021  22:38                60 .gitconfig
+25.06.2021  10:48    <DIR>          .ipython
+28.05.2021  14:09    <DIR>          .matplotlib
+09.07.2021  18:29    <DIR>          .ScreamingFrogSEOSpider
+02.06.2021  12:36    <DIR>          .ssh
+04.07.2021  13:50    <DIR>          .VirtualBox
+20.05.2021  00:34    <DIR>          3D Objects
+20.05.2021  01:15    <DIR>          ansel
+20.05.2021  00:34    <DIR>          Contacts
+16.07.2021  22:36    <DIR>          Desktop
+09.06.2021  23:12    <DIR>          Documents
+17.07.2021  12:07    <DIR>          Downloads
+17.07.2021  12:33             1 869 dump.sql
+20.05.2021  00:34    <DIR>          Favorites
+20.05.2021  00:34    <DIR>          Links
+20.05.2021  00:34    <DIR>          Music
+15.07.2021  16:54                35 my.cnf
+15.07.2021  17:00         1 235 925 mysql.sql
+11.07.2021  08:59    <DIR>          OneDrive
+20.05.2021  00:35    <DIR>          Pictures
+07.07.2021  22:44    <DIR>          projects
+20.05.2021  00:34    <DIR>          Saved Games
+20.05.2021  00:35    <DIR>          Searches
+20.05.2021  00:54    <DIR>          Tracing
+17.07.2021  11:30    <DIR>          Videos
+05.06.2021  13:38    <DIR>          VirtualBox VMs
+               5 файлов      1 238 765 байт
+              25 папок  47 963 193 344 байт свободно
+
+C:\Users\vladv>mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 25
+Server version: 8.0.25 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database sample;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> exit
+Bye
+
+
+C:\Users\vladv>mysql sample < dump.sql
+
+C:\Users\vladv>mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 27
+Server version: 8.0.25 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use sample;
+Database changed
+mysql> show tables;
++------------------+
+| Tables_in_sample |
++------------------+
+| users            |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> describe users;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| id    | int          | YES  |     | NULL    |       |
+| name  | varchar(255) | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql>
+
+4. (по желанию) Ознакомьтесь более подробно с документацией утилиты mysqldump. 
+
+Создайте дамп единственной таблицы help_keyword базы данных mysql. 
+
+Причем добейтесь того, чтобы дамп содержал только первые 100 строк таблицы.
+
+C:\Users\vladv>mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 29
+Server version: 8.0.25 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use mysql;
+Database changed
+mysql> show mysql;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'mysql' at line 1
+mysql> show tables;
++------------------------------------------------------+
+| Tables_in_mysql                                      |
++------------------------------------------------------+
+| columns_priv                                         |
+| component                                            |
+| db                                                   |
+| default_roles                                        |
+| engine_cost                                          |
+| func                                                 |
+| general_log                                          |
+| global_grants                                        |
+| gtid_executed                                        |
+| help_category                                        |
+| help_keyword                                         |
+| help_relation                                        |
+| help_topic                                           |
+| innodb_index_stats                                   |
+| innodb_table_stats                                   |
+| password_history                                     |
+| plugin                                               |
+| procs_priv                                           |
+| proxies_priv                                         |
+| replication_asynchronous_connection_failover         |
+| replication_asynchronous_connection_failover_managed |
+| role_edges                                           |
+| server_cost                                          |
+| servers                                              |
+| slave_master_info                                    |
+| slave_relay_log_info                                 |
+| slave_worker_info                                    |
+| slow_log                                             |
+| tables_priv                                          |
+| time_zone                                            |
+| time_zone_leap_second                                |
+| time_zone_name                                       |
+| time_zone_transition                                 |
+| time_zone_transition_type                            |
+| user                                                 |
++------------------------------------------------------+
+35 rows in set (0.00 sec)
+
+mysql> describe help_keyword;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| help_keyword_id | int unsigned | NO   | PRI | NULL    |       |
+| name            | char(64)     | NO   | UNI | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> show help_keyword;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'help_keyword' at line 1
+mysql> select * from help_keyword;
++-----------------+----------------------------------------+
+| help_keyword_id | name                                   |
++-----------------+----------------------------------------+
+|             108 | %                                      |
+|             264 | &                                      |
+|             422 | (JSON                                  |
+|              86 | *                                      |
+|              84 | +                                      |
+|              85 | -                                      |
+|             423 | ->                                     |
+|             425 | ->>                                    |
+|              87 | /                                      |
+|              75 | :=                                     |
+|              59 | <                                      |
+|             266 | <<                                     |
+|              58 | <=                                     |
+|              56 | <=>                                    |
+|              57 | <>                                     |
+|              55 | =                                      |
+|              61 | >                                      |
+|              60 | >=                                     |
+|             267 | >>                                     |
+|              90 | ABS                                    |
+|             877 | ACCOUNT                                |
+|              91 | ACOS                                   |
+|             657 | ACTION                                 |
+|              49 | ADD                                    |
+|             120 | ADDDATE                                |
+|             121 | ADDTIME                                |
+|             903 | ADMIN                                  |
+|             270 | AES_DECRYPT                            |
+|             271 | AES_ENCRYPT                            |
+|             579 | AFTER                                  |
+|             247 | AGAINST                                |
+|             924 | AGGREGATE                              |
+|             580 | ALGORITHM                              |
+|             719 | ALL                                    |
+|              50 | ALTER                                  |
+|             581 | ANALYZE                                |
+|              62 | AND                                    |
+|             526 | ANY_VALUE                              |
+|             658 | ARCHIVE                                |
+|             254 | ARRAY                                  |
+|             720 | AS                                     |
+|             464 | ASC                                    |
+|             185 | ASCII                                  |
+|              92 | ASIN                                   |
+|             772 | ASSIGN_GTIDS_TO_ANONYMOUS_TRANSACTIONS |
+|               6 | ASYMMETRIC_DECRYPT                     |
+|               7 | ASYMMETRIC_DERIVE                      |
+|               8 | ASYMMETRIC_ENCRYPT                     |
+|               9 | ASYMMETRIC_SIGN                        |
+|              10 | ASYMMETRIC_VERIFY                      |
+|             641 | AT                                     |
+|              93 | ATAN                                   |
+|              94 | ATAN2                                  |
+|             878 | ATTRIBUTE                              |
+|             741 | AUTOCOMMIT                             |
+|             582 | AUTOEXTEND_SIZE                        |
+|             583 | AUTO_INCREMENT                         |
+|             458 | AVG                                    |
+|             584 | AVG_ROW_LENGTH                         |
+|             753 | BACKUP                                 |
+|             767 | BEFORE                                 |
+|             742 | BEGIN                                  |
+|             288 | BENCHMARK                              |
+|              63 | BETWEEN                                |
+|             186 | BIN                                    |
+|             253 | BINARY                                 |
+|             562 | BINLOG                                 |
+|             527 | BIN_TO_UUID                            |
+|             460 | BIT_AND                                |
+|             269 | BIT_COUNT                              |
+|             187 | BIT_LENGTH                             |
+|             461 | BIT_OR                                 |
+|             462 | BIT_XOR                                |
+|              17 | BOOL                                   |
+|              18 | BOOLEAN                                |
+|             230 | BOTH                                   |
+|             645 | BTREE                                  |
+|             465 | BY                                     |
+|              42 | BYTE                                   |
+|             959 | CACHE                                  |
+|             687 | CALL                                   |
+|             497 | CAN_ACCESS_COLUMN                      |
+|             498 | CAN_ACCESS_DATABASE                    |
+|             499 | CAN_ACCESS_TABLE                       |
+|             500 | CAN_ACCESS_USER                        |
+|             501 | CAN_ACCESS_VIEW                        |
+|             659 | CASCADE                                |
+|              76 | CASE                                   |
+|             255 | CAST                                   |
+|             858 | CATALOG_NAME                           |
+|              95 | CEIL                                   |
+|              96 | CEILING                                |
+|             743 | CHAIN                                  |
+|             585 | CHANGE                                 |
+|             563 | CHANNEL                                |
+|              43 | CHAR                                   |
+|              39 | CHARACTER                              |
+|             189 | CHARACTER_LENGTH                       |
+|             289 | CHARSET                                |
+|             188 | CHAR_LENGTH                            |
+|             586 | CHECK                                  |
+|             587 | CHECKSUM                               |
+|             879 | CIPHER                                 |
+|             859 | CLASS_ORIGIN                           |
+|             904 | CLIENT                                 |
+|             932 | CLONE                                  |
+|             693 | CLOSE                                  |
+|              65 | COALESCE                               |
+|             953 | CODE                                   |
+|             290 | COERCIBILITY                           |
+|             545 | COLLATE                                |
+|             291 | COLLATION                              |
+|             588 | COLUMN                                 |
+|             589 | COLUMNS                                |
+|             860 | COLUMN_NAME                            |
+|             550 | COMMENT                                |
+|             744 | COMMIT                                 |
+|             756 | COMMITTED                              |
+|             660 | COMPACT                                |
+|             551 | COMPLETION                             |
+|             928 | COMPONENT                              |
+|             272 | COMPRESS                               |
+|             661 | COMPRESSED                             |
+|             590 | COMPRESSION                            |
+|             190 | CONCAT                                 |
+|             191 | CONCAT_WS                              |
+|             706 | CONCURRENT                             |
+|             855 | CONDITION                              |
+|             591 | CONNECTION                             |
+|             292 | CONNECTION_ID                          |
+|             745 | CONSISTENT                             |
+|             592 | CONSTRAINT                             |
+|             861 | CONSTRAINT_CATALOG                     |
+|             862 | CONSTRAINT_NAME                        |
+|             863 | CONSTRAINT_SCHEMA                      |
+|             856 | CONTINUE                               |
+|              97 | CONV                                   |
+|             256 | CONVERT                                |
+|             122 | CONVERT_TZ                             |
+|              98 | COS                                    |
+|              99 | COT                                    |
+|             463 | COUNT                                  |
+|             100 | CRC32                                  |
+|              51 | CREATE                                 |
+|              11 | CREATE_ASYMMETRIC_PRIV_KEY             |
+|              12 | CREATE_ASYMMETRIC_PUB_KEY              |
+|              13 | CREATE_DH_PARAMETERS                   |
+|              14 | CREATE_DIGEST                          |
+|             736 | CROSS                                  |
+|             662 | CSV                                    |
+|             482 | CUME_DIST                              |
+|             123 | CURDATE                                |
+|             880 | CURRENT                                |
+|             124 | CURRENT_DATE                           |
+|             293 | CURRENT_ROLE                           |
+|             125 | CURRENT_TIME                           |
+|             126 | CURRENT_TIMESTAMP                      |
+|             294 | CURRENT_USER                           |
+|             853 | CURSOR                                 |
+|             864 | CURSOR_NAME                            |
+|             127 | CURTIME                                |
+|             593 | DATA                                   |
+|             295 | DATABASE                               |
+|             937 | DATABASES                              |
+|             634 | DATAFILE                               |
+|              36 | DATE                                   |
+|             128 | DATEDIFF                               |
+|             257 | DATETIME                               |
+|             129 | DATE_ADD                               |
+|             144 | DATE_FORMAT                            |
+|             130 | DATE_SUB                               |
+|             131 | DAY                                    |
+|             145 | DAYNAME                                |
+|             146 | DAYOFMONTH                             |
+|             147 | DAYOFWEEK                              |
+|             148 | DAYOFYEAR                              |
+|             132 | DAY_HOUR                               |
+|             133 | DAY_MINUTE                             |
+|             134 | DAY_SECOND                             |
+|             844 | DEALLOCATE                             |
+|              28 | DEC                                    |
+|              31 | DECIMAL                                |
+|             845 | DECLARE                                |
+|               2 | DEFAULT                                |
+|             835 | DEFAULT_AUTH                           |
+|             552 | DEFINER                                |
+|             651 | DEFINITION                             |
+|             101 | DEGREES                                |
+|             699 | DELAYED                                |
+|             594 | DELAY_KEY_WRITE                        |
+|             663 | DELETE                                 |
+|             483 | DENSE_RANK                             |
+|             466 | DESC                                   |
+|             970 | DESCRIBE                               |
+|             652 | DESCRIPTION                            |
+|             865 | DIAGNOSTICS                            |
+|             595 | DIRECTORY                              |
+|             553 | DISABLE                                |
+|             596 | DISCARD                                |
+|             459 | DISTINCT                               |
+|             721 | DISTINCTROW                            |
+|              88 | DIV                                    |
+|             554 | DO                                     |
+|             597 | DROP                                   |
+|             735 | DUAL                                   |
+|             722 | DUMPFILE                               |
+|             700 | DUPLICATE                              |
+|             664 | DYNAMIC                                |
+|              77 | ELSE                                   |
+|             846 | ELSEIF                                 |
+|             192 | ELT                                    |
+|             555 | ENABLE                                 |
+|             707 | ENCLOSED                               |
+|             546 | ENCRYPTION                             |
+|              78 | END                                    |
+|             642 | ENDS                                   |
+|             598 | ENGINE                                 |
+|             938 | ENGINES                                |
+|             564 | ERROR                                  |
+|             939 | ERRORS                                 |
+|             239 | ESCAPE                                 |
+|             708 | ESCAPED                                |
+|             556 | EVENT                                  |
+|             951 | EVENTS                                 |
+|             643 | EVERY                                  |
+|             915 | EXCEPT                                 |
+|             599 | EXCHANGE                               |
+|             843 | EXECUTE                                |
+|             640 | EXISTS                                 |
+|             857 | EXIT                                   |
+|             102 | EXP                                    |
+|             248 | EXPANSION                              |
+|             881 | EXPIRE                                 |
+|             971 | EXPLAIN                                |
+|             960 | EXPORT                                 |
+|             193 | EXPORT_SET                             |
+|             922 | EXTENDED                               |
+|             680 | EXTENT_SIZE                            |
+|             149 | EXTRACT                                |
+|             424 | EXTRACTION)                            |
+|             261 | EXTRACTVALUE                           |
+|             882 | FAILED_LOGIN_ATTEMPTS                  |
+|              15 | FALSE                                  |
+|             920 | FAST                                   |
+|             665 | FEDERATED                              |
+|             854 | FETCH                                  |
+|             194 | FIELD                                  |
+|             709 | FIELDS                                 |
+|             905 | FILE                                   |
+|             681 | FILE_BLOCK_SIZE                        |
+|             801 | FILTER                                 |
+|             195 | FIND_IN_SET                            |
+|             600 | FIRST                                  |
+|             484 | FIRST_VALUE                            |
+|              29 | FIXED                                  |
+|              32 | FLOAT4                                 |
+|              33 | FLOAT8                                 |
+|             103 | FLOOR                                  |
+|             961 | FLUSH                                  |
+|             565 | FOR                                    |
+|             737 | FORCE                                  |
+|             601 | FOREIGN                                |
+|             196 | FORMAT                                 |
+|             493 | FORMAT_BYTES                           |
+|             494 | FORMAT_PICO_TIME                       |
+|             296 | FOUND_ROWS                             |
+|             231 | FROM                                   |
+|             197 | FROM_BASE64                            |
+|             150 | FROM_DAYS                              |
+|             151 | FROM_UNIXTIME                          |
+|             666 | FULL                                   |
+|             602 | FULLTEXT                               |
+|             169 | FUNCTION                               |
+|             962 | GENERAL                                |
+|             336 | GEOMCOLLECTION                         |
+|             337 | GEOMETRYCOLLECTION                     |
+|             866 | GET                                    |
+|             502 | GET_DD_COLUMN_PRIVILEGES               |
+|             503 | GET_DD_CREATE_OPTIONS                  |
+|             504 | GET_DD_INDEX_SUB_PART_LENGTH           |
+|             152 | GET_FORMAT                             |
+|             283 | GET_LOCK                               |
+|             757 | GLOBAL                                 |
+|             906 | GRANT                                  |
+|             940 | GRANTS                                 |
+|              66 | GREATEST                               |
+|             574 | GROUP                                  |
+|             528 | GROUPING                               |
+|             467 | GROUP_CONCAT                           |
+|             454 | GTID_SUBSET                            |
+|             455 | GTID_SUBTRACT                          |
+|             694 | HANDLER                                |
+|             723 | HAVING                                 |
+|             667 | HEAP                                   |
+|               5 | HELP                                   |
+|               0 | HELP_DATE                              |
+|               1 | HELP_VERSION                           |
+|             198 | HEX                                    |
+|             701 | HIGH_PRIORITY                          |
+|             883 | HISTORY                                |
+|             646 | HOST                                   |
+|             941 | HOSTS                                  |
+|             135 | HOUR                                   |
+|             136 | HOUR_MINUTE                            |
+|             137 | HOUR_SECOND                            |
+|             297 | ICU_VERSION                            |
+|             717 | IDENTIFIED                             |
+|              81 | IF                                     |
+|              82 | IFNULL                                 |
+|             702 | IGNORE                                 |
+|             773 | IGNORE_SERVER_IDS                      |
+|             603 | IMPORT                                 |
+|              67 | IN                                     |
+|              52 | INDEX                                  |
+|             942 | INDEXES                                |
+|             531 | INET6_ATON                             |
+|             532 | INET6_NTOA                             |
+|             529 | INET_ATON                              |
+|             530 | INET_NTOA                              |
+|             710 | INFILE                                 |
+|             635 | INITIAL_SIZE                           |
+|             426 | INLINE                                 |
+|             738 | INNER                                  |
+|             566 | INNODB                                 |
+|             199 | INSERT                                 |
+|             604 | INSERT_METHOD                          |
+|             929 | INSTALL                                |
+|             567 | INSTANCE                               |
+|             200 | INSTR                                  |
+|              19 | INT1                                   |
+|              22 | INT2                                   |
+|              23 | INT3                                   |
+|              25 | INT4                                   |
+|              27 | INT8                                   |
+|              26 | INTEGER                                |
+|             505 | INTERNAL_AUTO_INCREMENT                |
+|             506 | INTERNAL_AVG_ROW_LENGTH                |
+|             508 | INTERNAL_CHECKSUM                      |
+|             507 | INTERNAL_CHECK_TIME                    |
+|             509 | INTERNAL_DATA_FREE                     |
+|             510 | INTERNAL_DATA_LENGTH                   |
+|             511 | INTERNAL_DD_CHAR_LENGTH                |
+|             512 | INTERNAL_GET_COMMENT_OR_ERROR          |
+|             513 | INTERNAL_GET_ENABLED_ROLE_JSON         |
+|             514 | INTERNAL_GET_HOSTNAME                  |
+|             515 | INTERNAL_GET_USERNAME                  |
+|             516 | INTERNAL_GET_VIEW_WARNING_OR_ERROR     |
+|             517 | INTERNAL_INDEX_COLUMN_CARDINALITY      |
+|             518 | INTERNAL_INDEX_LENGTH                  |
+|             519 | INTERNAL_IS_ENABLED_ROLE               |
+|             520 | INTERNAL_IS_MANDATORY_ROLE             |
+|             521 | INTERNAL_KEYS_DISABLED                 |
+|             522 | INTERNAL_MAX_DATA_LENGTH               |
+|             523 | INTERNAL_TABLE_ROWS                    |
+|             524 | INTERNAL_UPDATE_TIME                   |
+|              68 | INTERVAL                               |
+|             703 | INTO                                   |
+|             605 | INVISIBLE                              |
+|             836 | IO_THREAD                              |
+|              69 | IS                                     |
+|              71 | ISNULL                                 |
+|             758 | ISOLATION                              |
+|             884 | ISSUER                                 |
+|             284 | IS_FREE_LOCK                           |
+|             533 | IS_IPV4                                |
+|             534 | IS_IPV4_COMPAT                         |
+|             535 | IS_IPV4_MAPPED                         |
+|             536 | IS_IPV6                                |
+|             285 | IS_USED_LOCK                           |
+|             537 | IS_UUID                                |
+|             525 | IS_VISIBLE_DD_OBJECT                   |
+|             847 | ITERATE                                |
+|             724 | JOIN                                   |
+|             259 | JSON                                   |
+|             416 | JSON_ARRAY                             |
+|             470 | JSON_ARRAYAGG                          |
+|             434 | JSON_ARRAY_APPEND                      |
+|             435 | JSON_ARRAY_INSERT                      |
+|             419 | JSON_CONTAINS                          |
+|             420 | JSON_CONTAINS_PATH                     |
+|             444 | JSON_DEPTH                             |
+|             421 | JSON_EXTRACT                           |
+|             436 | JSON_INSERT                            |
+|             428 | JSON_KEYS                              |
+|             445 | JSON_LENGTH                            |
+|             437 | JSON_MERGE                             |
+|             438 | JSON_MERGE_PATCH                       |
+|             439 | JSON_MERGE_PRESERVE                    |
+|             417 | JSON_OBJECT                            |
+|             471 | JSON_OBJECTAGG                         |
+|             429 | JSON_OVERLAPS                          |
+|             451 | JSON_PRETTY                            |
+|             418 | JSON_QUOTE                             |
+|             440 | JSON_REMOVE                            |
+|             441 | JSON_REPLACE                           |
+|             449 | JSON_SCHEMA_VALID                      |
+|             450 | JSON_SCHEMA_VALIDATION_REPORT          |
+|             430 | JSON_SEARCH                            |
+|             442 | JSON_SET                               |
+|             452 | JSON_STORAGE_FREE                      |
+|             453 | JSON_STORAGE_SIZE                      |
+|             448 | JSON_TABLE                             |
+|             446 | JSON_TYPE                              |
+|             443 | JSON_UNQUOTE                           |
+|             447 | JSON_VALID                             |
+|             431 | JSON_VALUE                             |
+|              53 | KEY                                    |
+|             606 | KEYS                                   |
+|             607 | KEY_BLOCK_SIZE                         |
+|             967 | KILL                                   |
+|             485 | LAG                                    |
+|             695 | LAST                                   |
+|             153 | LAST_DAY                               |
+|             298 | LAST_INSERT_ID                         |
+|             486 | LAST_VALUE                             |
+|             201 | LCASE                                  |
+|             487 | LEAD                                   |
+|             232 | LEADING                                |
+|              72 | LEAST                                  |
+|             848 | LEAVE                                  |
+|             968 | LEAVES                                 |
+|             202 | LEFT                                   |
+|             203 | LENGTH                                 |
+|             759 | LEVEL                                  |
+|             223 | LIKE                                   |
+|             688 | LIMIT                                  |
+|             711 | LINES                                  |
+|             338 | LINESTRING                             |
+|             104 | LN                                     |
+|             712 | LOAD                                   |
+|             204 | LOAD_FILE                              |
+|             713 | LOCAL                                  |
+|             154 | LOCALTIME                              |
+|             155 | LOCALTIMESTAMP                         |
+|             205 | LOCATE                                 |
+|             608 | LOCK                                   |
+|             105 | LOG                                    |
+|             107 | LOG10                                  |
+|             106 | LOG2                                   |
+|             575 | LOGFILE                                |
+|             768 | LOGS                                   |
+|              47 | LONG                                   |
+|              48 | LONGBINARY                             |
+|             849 | LOOP                                   |
+|             206 | LOWER                                  |
+|             689 | LOW_PRIORITY                           |
+|             207 | LPAD                                   |
+|             208 | LTRIM                                  |
+|             156 | MAKEDATE                               |
+|             157 | MAKETIME                               |
+|             209 | MAKE_SET                               |
+|             568 | MASTER                                 |
+|             774 | MASTER_AUTO_POSITION                   |
+|             775 | MASTER_BIND                            |
+|             776 | MASTER_COMPRESSION_ALGORITHMS          |
+|             777 | MASTER_CONNECT_RETRY                   |
+|             778 | MASTER_HEARTBEAT_PERIOD                |
+|             779 | MASTER_HOST                            |
+|             780 | MASTER_LOG_FILE                        |
+|             781 | MASTER_LOG_POS                         |
+|             782 | MASTER_PASSWORD                        |
+|             783 | MASTER_PORT                            |
+|             538 | MASTER_POS_WAIT                        |
+|             784 | MASTER_RETRY_COUNT                     |
+|             785 | MASTER_SSL                             |
+|             786 | MASTER_SSL_CA                          |
+|             787 | MASTER_SSL_CERT                        |
+|             788 | MASTER_SSL_CIPHER                      |
+|             789 | MASTER_SSL_CRL                         |
+|             790 | MASTER_SSL_CRLPATH                     |
+|             791 | MASTER_SSL_KEY                         |
+|             792 | MASTER_SSL_VERIFY_SERVER_CERT          |
+|             793 | MASTER_TLS_CIPHERSUITES                |
+|             794 | MASTER_TLS_VERSION                     |
+|             795 | MASTER_USER                            |
+|             796 | MASTER_ZSTD_COMPRESSION_LEVEL          |
+|             249 | MATCH                                  |
+|             472 | MAX                                    |
+|             885 | MAX_CONNECTIONS_PER_HOUR               |
+|             886 | MAX_QUERIES_PER_HOUR                   |
+|             609 | MAX_ROWS                               |
+|             682 | MAX_SIZE                               |
+|             887 | MAX_UPDATES_PER_HOUR                   |
+|             888 | MAX_USER_CONNECTIONS                   |
+|             395 | MBRCONTAINS                            |
+|             396 | MBRCOVEREDBY                           |
+|             397 | MBRCOVERS                              |
+|             398 | MBRDISJOINT                            |
+|             399 | MBREQUALS                              |
+|             400 | MBRINTERSECTS                          |
+|             401 | MBROVERLAPS                            |
+|             402 | MBRTOUCHES                             |
+|             403 | MBRWITHIN                              |
+|             273 | MD5                                    |
+|             921 | MEDIUM                                 |
+|             432 | MEMBER                                 |
+|             725 | MEMORY                                 |
+|             668 | MERGE                                  |
+|             867 | MESSAGE_TEXT                           |
+|             158 | MICROSECOND                            |
+|             210 | MID                                    |
+|              24 | MIDDLEINT                              |
+|             473 | MIN                                    |
+|             138 | MINUTE                                 |
+|             139 | MINUTE_SECOND                          |
+|             610 | MIN_ROWS                               |
+|              89 | MOD                                    |
+|             250 | MODE                                   |
+|             611 | MODIFY                                 |
+|             140 | MONTH                                  |
+|             159 | MONTHNAME                              |
+|             669 | MRG_MYISAM                             |
+|             339 | MULTILINESTRING                        |
+|             340 | MULTIPOINT                             |
+|             341 | MULTIPOLYGON                           |
+|             943 | MUTEX                                  |
+|             670 | MYISAM                                 |
+|             868 | MYSQL_ERRNO                            |
+|             653 | NAME                                   |
+|             936 | NAMES                                  |
+|             539 | NAME_CONST                             |
+|              40 | NATIONAL                               |
+|             739 | NATURAL                                |
+|              41 | NCHAR                                  |
+|             671 | NDB                                    |
+|             672 | NDBCLUSTER                             |
+|             797 | NETWORK_NAMESPACE                      |
+|             889 | NEVER                                  |
+|             696 | NEXT                                   |
+|             569 | NO                                     |
+|             683 | NODEGROUP                              |
+|             890 | NONE                                   |
+|              64 | NOT                                    |
+|             160 | NOW                                    |
+|             919 | NO_WRITE_TO_BINLOG                     |
+|             488 | NTH_VALUE                              |
+|             489 | NTILE                                  |
+|              70 | NULL                                   |
+|              83 | NULLIF                                 |
+|             869 | NUMBER                                 |
+|              30 | NUMERIC                                |
+|              44 | NVARCHAR                               |
+|             211 | OCT                                    |
+|             212 | OCTET_LENGTH                           |
+|             433 | OF                                     |
+|             726 | OFFSET                                 |
+|             891 | OLD                                    |
+|             557 | ON                                     |
+|             547 | ONLY                                   |
+|             697 | OPEN                                   |
+|             612 | OPTIMIZE                               |
+|             963 | OPTIMIZER_COSTS                        |
+|             907 | OPTION                                 |
+|             892 | OPTIONAL                               |
+|             714 | OPTIONALLY                             |
+|             577 | OPTIONS                                |
+|              73 | OR                                     |
+|             213 | ORD                                    |
+|             468 | ORDER                                  |
+|             654 | ORGANIZATION                           |
+|             740 | OUTER                                  |
+|             727 | OUTFILE                                |
+|             647 | OWNER                                  |
+|             613 | PACK_KEYS                              |
+|             614 | PARSER                                 |
+|             673 | PARTIAL                                |
+|             615 | PARTITION                              |
+|             616 | PARTITIONING                           |
+|             617 | PASSWORD                               |
+|             893 | PASSWORD_LOCK_TIME                     |
+|             427 | PATH)                                  |
+|             490 | PERCENT_RANK                           |
+|             161 | PERIOD_ADD                             |
+|             162 | PERIOD_DIFF                            |
+|             933 | PERSIST                                |
+|             934 | PERSIST_ONLY                           |
+|             109 | PI                                     |
+|             930 | PLUGIN                                 |
+|             954 | PLUGINS                                |
+|             837 | PLUGIN_DIR                             |
+|             342 | POINT                                  |
+|             343 | POLYGON                                |
+|             648 | PORT                                   |
+|             214 | POSITION                               |
+|             110 | POW                                    |
+|             111 | POWER                                  |
+|              34 | PRECISION                              |
+|             764 | PREPARE                                |
+|             558 | PRESERVE                               |
+|             698 | PREV                                   |
+|             618 | PRIMARY                                |
+|             908 | PRIVILEGES                             |
+|             798 | PRIVILEGE_CHECKS_USER                  |
+|             576 | PROCEDURE                              |
+|             909 | PROCESS                                |
+|             944 | PROCESSLIST                            |
+|             955 | PROFILE                                |
+|             956 | PROFILES                               |
+|             913 | PROXY                                  |
+|             495 | PS_CURRENT_THREAD_ID                   |
+|             496 | PS_THREAD_ID                           |
+|             769 | PURGE                                  |
+|             163 | QUARTER                                |
+|             251 | QUERY                                  |
+|             690 | QUICK                                  |
+|             215 | QUOTE                                  |
+|             112 | RADIANS                                |
+|             113 | RAND                                   |
+|             894 | RANDOM                                 |
+|             274 | RANDOM_BYTES                           |
+|             491 | RANK                                   |
+|             548 | READ                                   |
+|              35 | REAL                                   |
+|             619 | REBUILD                                |
+|             765 | RECOVER                                |
+|             570 | REDO_LOG                               |
+|             674 | REDUNDANT                              |
+|             655 | REFERENCE                              |
+|             675 | REFERENCES                             |
+|             241 | REGEXP                                 |
+|             243 | REGEXP_INSTR                           |
+|             244 | REGEXP_LIKE                            |
+|             245 | REGEXP_REPLACE                         |
+|             246 | REGEXP_SUBSTR                          |
+|             964 | RELAY                                  |
+|             957 | RELAYLOG                               |
+|             799 | RELAY_LOG_FILE                         |
+|             800 | RELAY_LOG_POS                          |
+|             746 | RELEASE                                |
+|             286 | RELEASE_ALL_LOCKS                      |
+|             287 | RELEASE_LOCK                           |
+|             571 | RELOAD                                 |
+|             620 | REMOVE                                 |
+|             559 | RENAME                                 |
+|             621 | REORGANIZE                             |
+|             622 | REPAIR                                 |
+|             216 | REPEAT                                 |
+|             760 | REPEATABLE                             |
+|             217 | REPLACE                                |
+|             834 | REPLICA                                |
+|             958 | REPLICAS                               |
+|             802 | REPLICATE_DO_DB                        |
+|             803 | REPLICATE_DO_TABLE                     |
+|             804 | REPLICATE_IGNORE_DB                    |
+|             805 | REPLICATE_IGNORE_TABLE                 |
+|             806 | REPLICATE_REWRITE_DB                   |
+|             807 | REPLICATE_WILD_DO_TABLE                |
+|             808 | REPLICATE_WILD_IGNORE_TABLE            |
+|             809 | REPLICATION                            |
+|             895 | REQUIRE                                |
+|             770 | RESET                                  |
+|             874 | RESIGNAL                               |
+|             916 | RESOURCE                               |
+|             969 | RESTART                                |
+|             678 | RESTRICT                               |
+|             896 | RETAIN                                 |
+|             851 | RETURN                                 |
+|             870 | RETURNED_SQLSTATE                      |
+|             925 | RETURNS                                |
+|             897 | REUSE                                  |
+|             218 | REVERSE                                |
+|             914 | REVOKE                                 |
+|             219 | RIGHT                                  |
+|             242 | RLIKE                                  |
+|             898 | ROLE                                   |
+|             299 | ROLES_GRAPHML                          |
+|             572 | ROLLBACK                               |
+|             114 | ROUND                                  |
+|             704 | ROW                                    |
+|             718 | ROWS                                   |
+|             300 | ROW_COUNT                              |
+|             623 | ROW_FORMAT                             |
+|             492 | ROW_NUMBER                             |
+|             220 | RPAD                                   |
+|             221 | RTRIM                                  |
+|             752 | SAVEPOINT                              |
+|             560 | SCHEDULE                               |
+|             301 | SCHEMA                                 |
+|             945 | SCHEMAS                                |
+|             871 | SCHEMA_NAME                            |
+|             141 | SECOND                                 |
+|             164 | SEC_TO_TIME                            |
+|             705 | SELECT                                 |
+|             469 | SEPARATOR                              |
+|               3 | SERIAL                                 |
+|             761 | SERIALIZABLE                           |
+|             578 | SERVER                                 |
+|             762 | SESSION                                |
+|             302 | SESSION_USER                           |
+|             549 | SET                                    |
+|             275 | SHA                                    |
+|             276 | SHA1                                   |
+|             277 | SHA2                                   |
+|             728 | SHARE                                  |
+|             946 | SHOW                                   |
+|             910 | SHUTDOWN                               |
+|             115 | SIGN                                   |
+|             876 | SIGNAL                                 |
+|             260 | SIGNED                                 |
+|             116 | SIN                                    |
+|             561 | SLAVE                                  |
+|             540 | SLEEP                                  |
+|             965 | SLOW                                   |
+|             747 | SNAPSHOT                               |
+|             649 | SOCKET                                 |
+|             926 | SONAME                                 |
+|             222 | SOUNDEX                                |
+|             224 | SOUNDS                                 |
+|             810 | SOURCE                                 |
+|             811 | SOURCE_AUTO_POSITION                   |
+|             812 | SOURCE_BIND                            |
+|             813 | SOURCE_COMPRESSION_ALGORITHMS          |
+|             814 | SOURCE_CONNECT_RETRY                   |
+|             815 | SOURCE_HEARTBEAT_PERIOD                |
+|             816 | SOURCE_HOST                            |
+|             817 | SOURCE_LOG_FILE                        |
+|             818 | SOURCE_LOG_POS                         |
+|             819 | SOURCE_PASSWORD                        |
+|             820 | SOURCE_PORT                            |
+|             821 | SOURCE_RETRY_COUNT                     |
+|             822 | SOURCE_SSL                             |
+|             823 | SOURCE_SSL_CA                          |
+|             824 | SOURCE_SSL_CERT                        |
+|             825 | SOURCE_SSL_CIPHER                      |
+|             826 | SOURCE_SSL_CRL                         |
+|             827 | SOURCE_SSL_CRLPATH                     |
+|             828 | SOURCE_SSL_KEY                         |
+|             829 | SOURCE_SSL_VERIFY_SERVER_CERT          |
+|             830 | SOURCE_TLS_CIPHERSUITES                |
+|             831 | SOURCE_TLS_VERSION                     |
+|             832 | SOURCE_USER                            |
+|             833 | SOURCE_ZSTD_COMPRESSION_LEVEL          |
+|             225 | SPACE                                  |
+|             624 | SPATIAL                                |
+|             875 | SQLSTATE                               |
+|             838 | SQL_AFTER_GTIDS                        |
+|             839 | SQL_AFTER_MTS_GAPS                     |
+|             840 | SQL_BEFORE_GTIDS                       |
+|             729 | SQL_BIG_RESULT                         |
+|             730 | SQL_BUFFER_RESULT                      |
+|             731 | SQL_CALC_FOUND_ROWS                    |
+|             771 | SQL_LOG_BIN                            |
+|             732 | SQL_NO_CACHE                           |
+|             733 | SQL_SMALL_RESULT                       |
+|             841 | SQL_THREAD                             |
+|             117 | SQRT                                   |
+|             899 | SSL                                    |
+|             748 | START                                  |
+|             715 | STARTING                               |
+|             644 | STARTS                                 |
+|             278 | STATEMENT_DIGEST                       |
+|             279 | STATEMENT_DIGEST_TEXT                  |
+|             625 | STATS_AUTO_RECALC                      |
+|             626 | STATS_PERSISTENT                       |
+|             627 | STATS_SAMPLE_PAGES                     |
+|             947 | STATUS                                 |
+|             474 | STD                                    |
+|             475 | STDDEV                                 |
+|             476 | STDDEV_POP                             |
+|             477 | STDDEV_SAMP                            |
+|             842 | STOP                                   |
+|             952 | STORAGE                                |
+|             676 | STORED                                 |
+|             734 | STRAIGHT_JOIN                          |
+|             240 | STRCMP                                 |
+|             927 | STRING                                 |
+|             165 | STR_TO_DATE                            |
+|             365 | ST_AREA                                |
+|             344 | ST_ASBINARY                            |
+|             408 | ST_ASGEOJSON                           |
+|             346 | ST_ASTEXT                              |
+|             345 | ST_ASWKB                               |
+|             347 | ST_ASWKT                               |
+|             373 | ST_BUFFER                              |
+|             374 | ST_BUFFER_STRATEGY                     |
+|             366 | ST_CENTROID                            |
+|             410 | ST_COLLECT                             |
+|             384 | ST_CONTAINS                            |
+|             375 | ST_CONVEXHULL                          |
+|             385 | ST_CROSSES                             |
+|             376 | ST_DIFFERENCE                          |
+|             349 | ST_DIMENSION                           |
+|             386 | ST_DISJOINT                            |
+|             387 | ST_DISTANCE                            |
+|             411 | ST_DISTANCE_SPHERE                     |
+|             359 | ST_ENDPOINT                            |
+|             350 | ST_ENVELOPE                            |
+|             388 | ST_EQUALS                              |
+|             367 | ST_EXTERIORRING                        |
+|             389 | ST_FRECHETDISTANCE                     |
+|             404 | ST_GEOHASH                             |
+|             306 | ST_GEOMCOLLFROMTEXT                    |
+|             321 | ST_GEOMCOLLFROMWKB                     |
+|             307 | ST_GEOMETRYCOLLECTIONFROMTEXT          |
+|             322 | ST_GEOMETRYCOLLECTIONFROMWKB           |
+|             308 | ST_GEOMETRYFROMTEXT                    |
+|             323 | ST_GEOMETRYFROMWKB                     |
+|             371 | ST_GEOMETRYN                           |
+|             351 | ST_GEOMETRYTYPE                        |
+|             409 | ST_GEOMFROMGEOJSON                     |
+|             309 | ST_GEOMFROMTEXT                        |
+|             324 | ST_GEOMFROMWKB                         |
+|             390 | ST_HAUSDORFFDISTANCE                   |
+|             368 | ST_INTERIORRINGN                       |
+|             377 | ST_INTERSECTION                        |
+|             391 | ST_INTERSECTS                          |
+|             360 | ST_ISCLOSED                            |
+|             352 | ST_ISEMPTY                             |
+|             353 | ST_ISSIMPLE                            |
+|             412 | ST_ISVALID                             |
+|             405 | ST_LATFROMGEOHASH                      |
+|             355 | ST_LATITUDE                            |
+|             361 | ST_LENGTH                              |
+|             310 | ST_LINEFROMTEXT                        |
+|             325 | ST_LINEFROMWKB                         |
+|             378 | ST_LINEINTERPOLATEPOINT                |
+|             379 | ST_LINEINTERPOLATEPOINTS               |
+|             311 | ST_LINESTRINGFROMTEXT                  |
+|             326 | ST_LINESTRINGFROMWKB                   |
+|             406 | ST_LONGFROMGEOHASH                     |
+|             356 | ST_LONGITUDE                           |
+|             413 | ST_MAKEENVELOPE                        |
+|             312 | ST_MLINEFROMTEXT                       |
+|             327 | ST_MLINEFROMWKB                        |
+|             314 | ST_MPOINTFROMTEXT                      |
+|             329 | ST_MPOINTFROMWKB                       |
+|             316 | ST_MPOLYFROMTEXT                       |
+|             331 | ST_MPOLYFROMWKB                        |
+|             313 | ST_MULTILINESTRINGFROMTEXT             |
+|             328 | ST_MULTILINESTRINGFROMWKB              |
+|             315 | ST_MULTIPOINTFROMTEXT                  |
+|             330 | ST_MULTIPOINTFROMWKB                   |
+|             317 | ST_MULTIPOLYGONFROMTEXT                |
+|             332 | ST_MULTIPOLYGONFROMWKB                 |
+|             372 | ST_NUMGEOMETRIES                       |
+|             369 | ST_NUMINTERIORRING                     |
+|             370 | ST_NUMINTERIORRINGS                    |
+|             362 | ST_NUMPOINTS                           |
+|             392 | ST_OVERLAPS                            |
+|             380 | ST_POINTATDISTANCE                     |
+|             407 | ST_POINTFROMGEOHASH                    |
+|             318 | ST_POINTFROMTEXT                       |
+|             333 | ST_POINTFROMWKB                        |
+|             363 | ST_POINTN                              |
+|             319 | ST_POLYFROMTEXT                        |
+|             334 | ST_POLYFROMWKB                         |
+|             320 | ST_POLYGONFROMTEXT                     |
+|             335 | ST_POLYGONFROMWKB                      |
+|             414 | ST_SIMPLIFY                            |
+|             354 | ST_SRID                                |
+|             364 | ST_STARTPOINT                          |
+|             348 | ST_SWAPXY                              |
+|             381 | ST_SYMDIFFERENCE                       |
+|             393 | ST_TOUCHES                             |
+|             382 | ST_TRANSFORM                           |
+|             383 | ST_UNION                               |
+|             415 | ST_VALIDATE                            |
+|             394 | ST_WITHIN                              |
+|             357 | ST_X                                   |
+|             358 | ST_Y                                   |
+|             872 | SUBCLASS_ORIGIN                        |
+|             166 | SUBDATE                                |
+|             900 | SUBJECT                                |
+|             226 | SUBSTR                                 |
+|             227 | SUBSTRING                              |
+|             228 | SUBSTRING_INDEX                        |
+|             167 | SUBTIME                                |
+|             478 | SUM                                    |
+|             911 | SUPER                                  |
+|             168 | SYSDATE                                |
+|             656 | SYSTEM                                 |
+|             303 | SYSTEM_USER                            |
+|              54 | TABLE                                  |
+|             755 | TABLES                                 |
+|             628 | TABLESPACE                             |
+|             873 | TABLE_NAME                             |
+|             118 | TAN                                    |
+|             686 | TEMPORARY                              |
+|             716 | TERMINATED                             |
+|              79 | THEN                                   |
+|             917 | THREAD_PRIORITY                        |
+|              38 | TIME                                   |
+|             170 | TIMEDIFF                               |
+|              37 | TIMESTAMP                              |
+|             171 | TIMESTAMPADD                           |
+|             172 | TIMESTAMPDIFF                          |
+|             258 | TIMEZONE                               |
+|             173 | TIME_FORMAT                            |
+|             174 | TIME_TO_SEC                            |
+|             573 | TLS                                    |
+|             636 | TO                                     |
+|             229 | TO_BASE64                              |
+|             175 | TO_DAYS                                |
+|             176 | TO_SECONDS                             |
+|             972 | TRADITIONAL                            |
+|             233 | TRAILING                               |
+|             749 | TRANSACTION                            |
+|             973 | TREE                                   |
+|             685 | TRIGGER                                |
+|             948 | TRIGGERS                               |
+|             234 | TRIM                                   |
+|              16 | TRUE                                   |
+|             119 | TRUNCATE                               |
+|             629 | TYPE                                   |
+|             235 | UCASE                                  |
+|             901 | UNBOUNDED                              |
+|             763 | UNCOMMITTED                            |
+|             280 | UNCOMPRESS                             |
+|             281 | UNCOMPRESSED_LENGTH                    |
+|             637 | UNDO                                   |
+|             236 | UNHEX                                  |
+|             931 | UNINSTALL                              |
+|             630 | UNION                                  |
+|             631 | UNIQUE                                 |
+|             177 | UNIX_TIMESTAMP                         |
+|             754 | UNLOCK                                 |
+|              20 | UNSIGNED                               |
+|             850 | UNTIL                                  |
+|             679 | UPDATE                                 |
+|             262 | UPDATEXML                              |
+|             632 | UPGRADE                                |
+|             237 | UPPER                                  |
+|             912 | USAGE                                  |
+|             684 | USE                                    |
+|             304 | USER                                   |
+|             966 | USER_RESOURCES                         |
+|             923 | USE_FRM                                |
+|             691 | USING                                  |
+|             178 | UTC_DATE                               |
+|             179 | UTC_TIME                               |
+|             180 | UTC_TIMESTAMP                          |
+|             541 | UUID                                   |
+|             542 | UUID_SHORT                             |
+|             543 | UUID_TO_BIN                            |
+|             282 | VALIDATE_PASSWORD_STRENGTH             |
+|               4 | VALUE                                  |
+|             544 | VALUES                                 |
+|              45 | VARCHARACTER                           |
+|             935 | VARIABLE                               |
+|             949 | VARIABLES                              |
+|             481 | VARIANCE                               |
+|              46 | VARYING                                |
+|             479 | VAR_POP                                |
+|             480 | VAR_SAMP                               |
+|             918 | VCPU                                   |
+|             305 | VERSION                                |
+|             639 | VIEW                                   |
+|             677 | VIRTUAL                                |
+|             633 | VISIBLE                                |
+|             638 | WAIT                                   |
+|             456 | WAIT_FOR_EXECUTED_GTID_SET             |
+|             457 | WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS      |
+|             950 | WARNINGS                               |
+|             181 | WEEK                                   |
+|             182 | WEEKDAY                                |
+|             183 | WEEKOFYEAR                             |
+|             238 | WEIGHT_STRING                          |
+|              80 | WHEN                                   |
+|             692 | WHERE                                  |
+|             852 | WHILE                                  |
+|             252 | WITH                                   |
+|             750 | WORK                                   |
+|             650 | WRAPPER                                |
+|             751 | WRITE                                  |
+|             902 | X509                                   |
+|             766 | XA                                     |
+|              74 | XOR                                    |
+|             142 | YEAR                                   |
+|             184 | YEARWEEK                               |
+|             143 | YEAR_MONTH                             |
+|              21 | ZEROFILL                               |
+|             265 | ^                                      |
+|             263 | |                                      |
+|             268 | ~                                      |
++-----------------+----------------------------------------+
+974 rows in set (0.00 sec)
+
+mysql> select * from help_keyword where help_keyword_id LIMIT 100;
++-----------------+----------------------------+
+| help_keyword_id | name                       |
++-----------------+----------------------------+
+|               1 | HELP_VERSION               |
+|               2 | DEFAULT                    |
+|               3 | SERIAL                     |
+|               4 | VALUE                      |
+|               5 | HELP                       |
+|               6 | ASYMMETRIC_DECRYPT         |
+|               7 | ASYMMETRIC_DERIVE          |
+|               8 | ASYMMETRIC_ENCRYPT         |
+|               9 | ASYMMETRIC_SIGN            |
+|              10 | ASYMMETRIC_VERIFY          |
+|              11 | CREATE_ASYMMETRIC_PRIV_KEY |
+|              12 | CREATE_ASYMMETRIC_PUB_KEY  |
+|              13 | CREATE_DH_PARAMETERS       |
+|              14 | CREATE_DIGEST              |
+|              15 | FALSE                      |
+|              16 | TRUE                       |
+|              17 | BOOL                       |
+|              18 | BOOLEAN                    |
+|              19 | INT1                       |
+|              20 | UNSIGNED                   |
+|              21 | ZEROFILL                   |
+|              22 | INT2                       |
+|              23 | INT3                       |
+|              24 | MIDDLEINT                  |
+|              25 | INT4                       |
+|              26 | INTEGER                    |
+|              27 | INT8                       |
+|              28 | DEC                        |
+|              29 | FIXED                      |
+|              30 | NUMERIC                    |
+|              31 | DECIMAL                    |
+|              32 | FLOAT4                     |
+|              33 | FLOAT8                     |
+|              34 | PRECISION                  |
+|              35 | REAL                       |
+|              36 | DATE                       |
+|              37 | TIMESTAMP                  |
+|              38 | TIME                       |
+|              39 | CHARACTER                  |
+|              40 | NATIONAL                   |
+|              41 | NCHAR                      |
+|              42 | BYTE                       |
+|              43 | CHAR                       |
+|              44 | NVARCHAR                   |
+|              45 | VARCHARACTER               |
+|              46 | VARYING                    |
+|              47 | LONG                       |
+|              48 | LONGBINARY                 |
+|              49 | ADD                        |
+|              50 | ALTER                      |
+|              51 | CREATE                     |
+|              52 | INDEX                      |
+|              53 | KEY                        |
+|              54 | TABLE                      |
+|              55 | =                          |
+|              56 | <=>                        |
+|              57 | <>                         |
+|              58 | <=                         |
+|              59 | <                          |
+|              60 | >=                         |
+|              61 | >                          |
+|              62 | AND                        |
+|              63 | BETWEEN                    |
+|              64 | NOT                        |
+|              65 | COALESCE                   |
+|              66 | GREATEST                   |
+|              67 | IN                         |
+|              68 | INTERVAL                   |
+|              69 | IS                         |
+|              70 | NULL                       |
+|              71 | ISNULL                     |
+|              72 | LEAST                      |
+|              73 | OR                         |
+|              74 | XOR                        |
+|              75 | :=                         |
+|              76 | CASE                       |
+|              77 | ELSE                       |
+|              78 | END                        |
+|              79 | THEN                       |
+|              80 | WHEN                       |
+|              81 | IF                         |
+|              82 | IFNULL                     |
+|              83 | NULLIF                     |
+|              84 | +                          |
+|              85 | -                          |
+|              86 | *                          |
+|              87 | /                          |
+|              88 | DIV                        |
+|              89 | MOD                        |
+|              90 | ABS                        |
+|              91 | ACOS                       |
+|              92 | ASIN                       |
+|              93 | ATAN                       |
+|              94 | ATAN2                      |
+|              95 | CEIL                       |
+|              96 | CEILING                    |
+|              97 | CONV                       |
+|              98 | COS                        |
+|              99 | COT                        |
+|             100 | CRC32                      |
++-----------------+----------------------------+
+100 rows in set (0.00 sec)
+
+mysql> exit
+Bye
+
+C:\Users\vladv>mysqldump mysql "select * from help_keyword where help_keyword_id LIMIT 100" > task4.sql
+mysqldump: Couldn't find table: "select * from help_keyword where help_keyword_id LIMIT 100"
+
+C:\Users\vladv>mysql mysql "select * from help_keyword where help_keyword_id LIMIT 100" > task4.sql
+
+C:\Users\vladv>mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 31
+Server version: 8.0.25 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database taskfour;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> exit
+Bye
+
+C:\Users\vladv>mysql taskfour < task4.sql
+ERROR 1064 (42000) at line 1: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'mysql  Ver 8.0.25 for Win64 on x86_64 (MySQL Community Server - GPL)
+Copyright (' at line 1
+
+C:\Users\vladv>show databases;
+"show" не является внутренней или внешней
+командой, исполняемой программой или пакетным файлом.
+
+C:\Users\vladv>mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 33
+Server version: 8.0.25 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| example            |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sample             |
+| shop               |
+| sys                |
+| taskfour           |
+| users              |
+| world              |
++--------------------+
+11 rows in set (0.00 sec)
+
+mysql> exit
+Bye
+
+C:\Users\vladv>dir
+ Том в устройстве C не имеет метки.
+ Серийный номер тома: 92B6-8DB6
+
+ Содержимое папки C:\Users\vladv
+
+17.07.2021  13:44    <DIR>          .
+17.07.2021  13:44    <DIR>          ..
+16.07.2021  13:50               876 .bash_history
+13.07.2021  11:03    <DIR>          .eclipse
+07.07.2021  22:38                60 .gitconfig
+25.06.2021  10:48    <DIR>          .ipython
+28.05.2021  14:09    <DIR>          .matplotlib
+09.07.2021  18:29    <DIR>          .ScreamingFrogSEOSpider
+02.06.2021  12:36    <DIR>          .ssh
+04.07.2021  13:50    <DIR>          .VirtualBox
+20.05.2021  00:34    <DIR>          3D Objects
+20.05.2021  01:15    <DIR>          ansel
+20.05.2021  00:34    <DIR>          Contacts
+16.07.2021  22:36    <DIR>          Desktop
+09.06.2021  23:12    <DIR>          Documents
+17.07.2021  12:58    <DIR>          Downloads
+17.07.2021  12:33             1 869 dump.sql
+20.05.2021  00:34    <DIR>          Favorites
+20.05.2021  00:34    <DIR>          Links
+20.05.2021  00:34    <DIR>          Music
+15.07.2021  16:54                35 my.cnf
+15.07.2021  17:00         1 235 925 mysql.sql
+11.07.2021  08:59    <DIR>          OneDrive
+20.05.2021  00:35    <DIR>          Pictures
+07.07.2021  22:44    <DIR>          projects
+20.05.2021  00:34    <DIR>          Saved Games
+20.05.2021  00:35    <DIR>          Searches
+17.07.2021  13:46            13 389 task4.sql
+17.07.2021  12:56            20 004 test.sql
+20.05.2021  00:54    <DIR>          Tracing
+17.07.2021  11:30    <DIR>          Videos
+05.06.2021  13:38    <DIR>          VirtualBox VMs
+               7 файлов      1 272 158 байт
+              25 папок  47 979 986 944 байт свободно
+
+C:\Users\vladv>mysql taskfour < task4.sql
+ERROR 1064 (42000) at line 1: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'mysql  Ver 8.0.25 for Win64 on x86_64 (MySQL Community Server - GPL)
+Copyright (' at line 1
+
+C:\Users\vladv>mysqldump task4.sql
+-- MySQL dump 10.13  Distrib 8.0.25, for Win64 (x86_64)
+--
+-- Host: localhost    Database: task4.sql
+-- ------------------------------------------------------
+-- Server version       8.0.25
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+mysqldump: Got error: 1049: Unknown database 'task4.sql' when selecting the database
+
+C:\Users\vladv>mysql task4.sql
+ERROR 1049 (42000): Unknown database 'task4.sql'
+
+C:\Users\vladv>mysqldump task4.sql;
+-- MySQL dump 10.13  Distrib 8.0.25, for Win64 (x86_64)
+--
+-- Host: localhost    Database: task4.sql;
+-- ------------------------------------------------------
+-- Server version       8.0.25
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+mysqldump: Got error: 1049: Unknown database 'task4.sql;' when selecting the database
+
+C:\Users\vladv>mysql
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 38
+Server version: 8.0.25 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases
+    -> ;
++--------------------+
+| Database           |
++--------------------+
+| example            |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sample             |
+| shop               |
+| sys                |
+| taskfour           |
+| users              |
+| world              |
++--------------------+
+11 rows in set (0.00 sec)
+
+mysql> use taskfour;
+Database changed
+mysql> select * from taskfour;
+ERROR 1146 (42S02): Table 'taskfour.taskfour' doesn't exist
+mysql> show tables;
+Empty set (0.00 sec)
+
+mysql> exit
+Bye
+
+C:\Users\vladv>mysql taskfour < task4.sql
+ERROR 1064 (42000) at line 1: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'mysql  Ver 8.0.25 for Win64 on x86_64 (MySQL Community Server - GPL)
+Copyright (' at line 1
+
+C:\Users\vladv>mysqldump mysql > test2.sql
+
+C:\Users\vladv>mysql taskfour < test2.sql
+ERROR 3723 (HY000) at line 25: The table 'columns_priv' may not be created in the reserved tablespace 'mysql'.
+
+C:\Users\vladv>
+
+

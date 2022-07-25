@@ -1,0 +1,160 @@
+Практическое задание по теме “Оптимизация запросов”
+
+1. Создайте таблицу logs типа Archive. Пусть при каждом создании записи в таблицах users, catalogs и products 
+в таблицу logs помещается время и дата создания записи, название таблицы, 
+идентификатор первичного ключа и содержимое поля name.
+
+users триггер
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `users_AFTER_INSERT` AFTER INSERT ON `users` FOR EACH ROW BEGIN
+	INSERT INTO logs (created_at, table_name, str_id, name_value)
+	VALUES (NOW(), 'users', NEW.id, NEW.name);
+END
+
+catalogs триггер
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `catalogs_AFTER_INSERT` AFTER INSERT ON `catalogs` FOR EACH ROW BEGIN
+	INSERT INTO logs (created_at, table_name, str_id, name_value)
+	VALUES (NOW(), 'catalogs', NEW.id, NEW.name);
+END
+
+products триггер
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `products_AFTER_INSERT` AFTER INSERT ON `products` FOR EACH ROW BEGIN
+INSERT INTO logs (created_at, table_name, str_id, name_value)
+	VALUES (NOW(), 'products', NEW.id, NEW.name);
+END
+
+2. (по желанию) Создайте SQL-запрос, который помещает в таблицу users миллион записей.
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `new_procedure`()
+BEGIN
+DECLARE i INT DEFAULT 100;
+	DECLARE j INT DEFAULT 0;
+	WHILE i > 0 DO
+		INSERT INTO test_users(name, birthday_at) VALUES (CONCAT('user_', j), NOW());
+		SET j = j + 1;
+		SET i = i - 1;
+	END WHILE;
+END
+
+При вызове  call shop.new_procedure();
+
+В таблицу добавляются 100 новых пользователей
+
+
+
+Практическое задание по теме “NoSQL”
+
+1. В базе данных Redis подберите коллекцию для подсчета посещений с определенных IP-адресов.
+
+spark@spark-VirtualBox:~$ docker exec -it /some-redis /bin/bash
+root@b694cb5b942f:/data# redis-cli
+127.0.0.1:6379> set ip1 1
+OK
+127.0.0.1:6379> get ip1
+"1"
+127.0.0.1:6379> incr ip1
+(integer) 2
+127.0.0.1:6379> incr ip1
+(integer) 3
+127.0.0.1:6379> get ip1
+"3"
+127.0.0.1:6379> 
+
+
+2. При помощи базы данных Redis решите задачу поиска имени пользователя по электронному адресу и наоборот, 
+поиск электронного адреса пользователя по его имени.
+
+spark@spark-VirtualBox:~$ docker exec -it /some-redis /bin/bash
+root@b694cb5b942f:/data# redis-cli
+127.0.0.1:6379> exit
+root@b694cb5b942f:/data# set vladislav.spark@yandex.ru vlad
+root@b694cb5b942f:/data# set vlad vladislav.spark@yandex.ru
+root@b694cb5b942f:/data# get vlad
+bash: get: command not found
+root@b694cb5b942f:/data# get vladislav.spark@yandex.ru
+bash: get: command not found
+root@b694cb5b942f:/data# redis-cli
+127.0.0.1:6379> et vladislav.spark@yandex.ru vlad
+(error) ERR unknown command `et`, with args beginning with: `vladislav.spark@yandex.ru`, `vlad`, 
+127.0.0.1:6379> set vladislav.spark@yandex.ru vlad
+OK
+127.0.0.1:6379> set vlad vladislav.spark@yandex.ru
+OK
+127.0.0.1:6379> get vlad
+"vladislav.spark@yandex.ru"
+127.0.0.1:6379> get vladislav.spark@yandex.ru
+"vlad"
+127.0.0.1:6379> 
+
+
+3. Организуйте хранение категорий и товарных позиций учебной базы данных shop в СУБД MongoDB.
+
+
+spark@spark-VirtualBox:~$ docker run --name some-mongo -d mongo
+Unable to find image 'mongo:latest' locally
+latest: Pulling from library/mongo
+16ec32c2132b: Pull complete 
+6335cf672677: Pull complete 
+cbc70ccc8ebe: Pull complete 
+0d1a3c6bd417: Pull complete 
+960f3b9b27d3: Pull complete 
+aff995a136b4: Pull complete 
+4249be7550a8: Pull complete 
+cc105ff5aa3c: Pull complete 
+82819807d07a: Pull complete 
+81447d2c233f: Pull complete 
+Digest: sha256:54d24682d00278f64bf21ff62b7ee62b59dae50f65139831a884b345922b0f8a
+Status: Downloaded newer image for mongo:latest
+0f41d75def78096b227ede23f08670d1d0c39dbf631df30c6ba00bd48c9ea736
+spark@spark-VirtualBox:~$  docker exec -it /some-mongo /bin/bash
+root@0f41d75def78:/# mongo
+MongoDB shell version v5.0.2
+connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("9c7609b7-726a-43d9-a4c4-2accde77bdb9") }
+MongoDB server version: 5.0.2
+================
+Warning: the "mongo" shell has been superseded by "mongosh",
+which delivers improved usability and compatibility.The "mongo" shell has been deprecated and will be removed in
+an upcoming release.
+We recommend you begin using "mongosh".
+For installation instructions, see
+https://docs.mongodb.com/mongodb-shell/install/
+================
+Welcome to the MongoDB shell.
+For interactive help, type "help".
+For more comprehensive documentation, see
+	https://docs.mongodb.com/
+Questions? Try the MongoDB Developer Community Forums
+	https://community.mongodb.com
+---
+The server generated these startup warnings when booting: 
+        2021-08-25T13:38:09.410+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+        2021-08-25T13:38:10.390+00:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+---
+---
+        Enable MongoDB's free cloud-based monitoring service, which will then receive and display
+        metrics about your deployment (disk utilization, CPU, operation statistics, etc).
+
+        The monitoring data will be available on a MongoDB website with a unique URL accessible to you
+        and anyone you share the URL with. MongoDB may use this information to make product
+        improvements and to suggest MongoDB products and deployment options to you.
+
+        To enable free monitoring, run the following command: db.enableFreeMonitoring()
+        To permanently disable this reminder, run the following command: db.disableFreeMonitoring()
+---
+> use shop
+switched to db shop
+> use vk
+switched to db vk
+> use shop
+switched to db shop
+> db.shop.insert({"type":"category", "name":"computers"})
+WriteResult({ "nInserted" : 1 })
+> db.shop.insert({"type":"products", "name":"display"})
+WriteResult({ "nInserted" : 1 })
+> db.shop.find()
+{ "_id" : ObjectId("6126480a712537496ca3783c"), "type" : "category", "name" : "computers" }
+{ "_id" : ObjectId("61264832712537496ca3783d"), "type" : "products", "name" : "display" }
+> 

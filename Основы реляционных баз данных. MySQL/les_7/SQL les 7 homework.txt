@@ -1,0 +1,36 @@
+1. Составьте список пользователей users, которые осуществили хотя бы один заказ orders в интернет магазине.
+
+SELECT 
+
+u.name,
+o.user_id
+ FROM 
+`users` u
+
+left join `orders` o ON u.id = o.user_id
+
+where user_id is not null
+group by user_id;
+
+
+2. Выведите список товаров products и разделов catalogs, который соответствует товару.
+
+SELECT 
+p.id,
+p.name as product_name,
+p.price,
+c.id as category_name
+FROM `products` p
+left join `catalogs` c ON p.catalog_id = c.id;
+
+3. (по желанию) Пусть имеется таблица рейсов flights (id, from, to) и таблица городов cities (label, name). 
+Поля from, to и label содержат английские названия городов, поле name — русское. 
+Выведите список рейсов flights с русскими названиями городов.
+
+SELECT  from_c.name as departure, 
+to_c.name  as arrival 
+FROM flights f
+JOIN cities from_c ON f.from = from_c.label
+JOIN cities to_c ON f.to = to_c.label
+
+
